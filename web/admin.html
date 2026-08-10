@@ -56,11 +56,12 @@
       <label><input type="checkbox" id="showNumbers"> Show my numbered drawing underneath</label>
       <button id="addBtn2" class="addbtn addbtn--inline" type="button">+ Add a dot</button>
       <span class="place__hint">Drag any dot to move it, or pick one below and click the map.</span>
+      <span id="numWarn" class="place__warn" hidden></span>
     </div>
     <div id="placeWrap">
       <div id="placeCanvas">
         <img id="placeMap" src="art/world.png" alt="">
-        <img id="placeMapNum" src="art/world-numbered.png" alt="" hidden>
+        <img id="placeMapNum" data-src="art/world-numbered.png" alt="" hidden>
         <div id="placeMarkers"></div>
       </div>
     </div>

@@ -320,8 +320,22 @@
     syncCoords();
   });
 
+  /* The numbered drawing is loaded only when asked for, so the admin panel
+     doesn't 404 on every visit while that file is still missing. */
   $('#showNumbers').addEventListener('change', (e) => {
-    $('#placeMapNum').hidden = !e.target.checked;
+    const img = $('#placeMapNum');
+    if (!e.target.checked) { img.hidden = true; return; }
+    if (!img.src) img.src = img.dataset.src;
+    img.hidden = false;
+  });
+
+  $('#placeMapNum').addEventListener('error', () => {
+    $('#placeMapNum').hidden = true;
+    $('#showNumbers').checked = false;
+    $('#showNumbers').disabled = true;
+    const warn = $('#numWarn');
+    warn.textContent = 'world-numbered.png is not in web/art/ yet — upload it to line the dots up against your numbers.';
+    warn.hidden = false;
   });
 
   /* ---------------- save / backup ---------------- */

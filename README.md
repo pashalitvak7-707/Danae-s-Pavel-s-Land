@@ -14,13 +14,17 @@ changes appear on the live site straight away.
 Two files go into the `web/art/` folder. **The names must match exactly** —
 lowercase, with `.png` on the end:
 
-| Filename | What it is | Who sees it |
-| --- | --- | --- |
-| `world.png` | The clean drawing, no numbers | Everyone — this is the map |
-| `world-numbered.png` | The same drawing with your pink numbers | Only you, inside the admin panel |
+| Filename | What it is | Who sees it | Status |
+| --- | --- | --- | --- |
+| `world.png` | The clean drawing, no numbers | Everyone — this is the map | ✅ in place |
+| `world-numbered.png` | The same drawing with the pink numbers | Only you, inside the admin panel | ⬜ still needed |
 
-Placeholder versions of both are already committed, so the site runs today.
-You are replacing them, not adding alongside them.
+**The filename is what matters, not the file.** Uploading a drawing under any
+other name (`Correct image.png`, `map final.png`) adds a file the site never
+looks at — it must be named `world.png`, sitting in `web/art/`.
+
+Until `world-numbered.png` is uploaded, the *Show my numbered drawing
+underneath* tick-box in the admin panel greys itself out and says so.
 
 ### Requirements
 
