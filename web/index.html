@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<title>Pasha &amp; Danae</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+
+<!-- ============ MAP ============ -->
+<main id="stage" aria-label="A map of our places">
+  <div id="scroller">
+    <div id="canvas">
+      <img id="map" src="art/world.png" alt="Hand-drawn map of Madrid, St. Tropez, Greece and Cyprus">
+      <div id="markers"></div>
+    </div>
+  </div>
+
+  <p id="hint" aria-live="polite"></p>
+</main>
+
+<!-- ============ NAME CARD (pops above a marker) ============ -->
+<div id="card" class="card" hidden>
+  <button class="card__close" type="button" aria-label="Close">&times;</button>
+  <p class="card__place"></p>
+  <h2 class="card__name"></h2>
+  <button class="card__open" type="button">Open this memory</button>
+  <span class="card__tail" aria-hidden="true"></span>
+</div>
+
+<!-- ============ MEMORY PAGE (hidden until opened) ============ -->
+<article id="page" class="page" hidden aria-modal="true" role="dialog">
+  <button id="pageBack" class="page__back" type="button">&larr; back to the map</button>
+  <div class="page__scroll">
+    <header class="page__head">
+      <p class="page__place"></p>
+      <h1 class="page__title"></h1>
+      <p class="page__date"></p>
+    </header>
+    <div class="page__body"></div>
+    <div class="page__photos"></div>
+    <p class="page__sign"></p>
+  </div>
+</article>
+
+<div id="loader"><span></span></div>
+
+<script src="js/api.js"></script>
+<script src="js/site.js"></script>
+</body>
+</html>

@@ -141,3 +141,6 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# Content saved by the local server (the deployed site keeps its own copy)
+.data/

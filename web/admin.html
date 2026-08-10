@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<title>Admin — Pasha &amp; Danae</title>
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<!-- ===== login gate ===== -->
+<div id="gate">
+  <form id="gateForm">
+    <h1>Admin</h1>
+    <p class="gate__sub">Enter the password to edit the memories.</p>
+    <input id="pw" type="password" autocomplete="current-password" placeholder="Password" required>
+    <button type="submit">Sign in</button>
+    <p id="gateErr" class="err"></p>
+  </form>
+</div>
+
+<!-- ===== admin app ===== -->
+<div id="app" hidden>
+  <header id="bar">
+    <strong>Memory admin</strong>
+    <span id="status"></span>
+    <div class="bar__right">
+      <a href="index.html" target="_blank" rel="noopener">View site &nearr;</a>
+      <button id="saveBtn" type="button" class="primary">Save changes</button>
+      <button id="outBtn" type="button">Sign out</button>
+    </div>
+  </header>
+
+  <nav id="tabs">
+    <button data-tab="text" class="is-on" type="button">Texts</button>
+    <button data-tab="place" type="button">Marker positions</button>
+    <button data-tab="site" type="button">Site &amp; backup</button>
+  </nav>
+
+  <!-- --- texts --- -->
+  <section id="tab-text" class="tab">
+    <aside id="list"></aside>
+    <div id="editor">
+      <p class="empty">Pick a memory on the left.</p>
+    </div>
+  </section>
+
+  <!-- --- marker placement --- -->
+  <section id="tab-place" class="tab" hidden>
+    <div class="place__bar">
+      <label><input type="checkbox" id="showNumbers"> Show my numbered drawing underneath</label>
+      <span class="place__hint">Pick a memory below, then click the map to move its dot.</span>
+    </div>
+    <div id="placeWrap">
+      <div id="placeCanvas">
+        <img id="placeMap" src="art/world.png" alt="">
+        <img id="placeMapNum" src="art/world-numbered.png" alt="" hidden>
+        <div id="placeMarkers"></div>
+      </div>
+    </div>
+    <div id="placeList"></div>
+  </section>
+
+  <!-- --- site settings --- -->
+  <section id="tab-site" class="tab" hidden>
+    <div class="pane">
+      <label>Site title <input id="fTitle" type="text"></label>
+      <label>Hint shown under the map <input id="fHint" type="text"></label>
+      <label>Dedication at the bottom of every memory page <input id="fDedic" type="text"></label>
+
+      <h2>Backup</h2>
+      <p class="note">Download a copy of everything, or restore from a file you saved earlier.</p>
+      <div class="row">
+        <button id="dlBtn" type="button">Download backup</button>
+        <label class="filebtn">Restore from file<input id="upInput" type="file" accept="application/json"></label>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

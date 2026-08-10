@@ -1,0 +1,17 @@
+{
+  "name": "pasha-and-danae",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A hand-drawn map of our places, with a memory behind every dot.",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
