@@ -85,6 +85,21 @@ button{ font:inherit; cursor:pointer; }
   font-size:13px;
 }
 
+.thumbs{
+  display:flex; flex-wrap:wrap; gap:12px;
+  margin:-6px 0 18px;
+}
+.thumb{ margin:0; width:132px; font-size:11px; color:#778; }
+.thumb img{
+  display:block; width:132px; height:96px; object-fit:cover;
+  border-radius:7px; border:1.5px solid var(--line); background:#eef1f7;
+}
+.thumb figcaption{
+  margin-top:4px; word-break:break-all; line-height:1.35;
+}
+.thumb.is-missing img{ border-color:#e6a2ae; background:#fdecef; }
+.thumb.is-missing figcaption{ color:#c0243c; }
+
 .rule{ border:0; border-top:1px solid var(--line); margin:26px 0 18px; }
 button.danger{
   padding:9px 15px; border:1.5px solid #f0c2cb; border-radius:7px;

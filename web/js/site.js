@@ -191,7 +191,7 @@
       fig.style.setProperty('--tilt', (i % 2 ? 1.6 : -1.8) + 'deg');
       fig.style.animationDelay = (0.35 + i * 0.09) + 's';
       const img = document.createElement('img');
-      img.src = /^(https?:|\/|data:)/.test(src) ? src : 'photos/' + src;
+      img.src = /^(https?:|\/|data:)/.test(src) ? src : 'photos/' + encodeURIComponent(src);
       img.alt = memory.name || '';
       img.loading = 'lazy';
       img.addEventListener('error', () => fig.remove());

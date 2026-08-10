@@ -112,6 +112,7 @@
         '<textarea id="eBody"></textarea></label>' +
       '<label>Photo files <span class="note" style="font-weight:400">— filenames from web/photos/, separated by commas</span>' +
         '<input type="text" id="ePhotos"></label>' +
+      '<div id="eThumbs" class="thumbs"></div>' +
       '<p class="coords">Dot position: <b id="eCoords"></b> — move it on the “Marker positions” tab.</p>' +
       '<hr class="rule">' +
       '<button type="button" id="eDelete" class="danger">Delete this memory</button>' +
@@ -132,7 +133,9 @@
     $('#ePhotos').addEventListener('input', (e) => {
       m.photos = e.target.value.split(',').map((s) => s.trim()).filter(Boolean);
       touch();
+      renderThumbs(m);
     });
+    renderThumbs(m);
     $('#eNumber').addEventListener('input', (e) => {
       const n = parseInt(e.target.value, 10);
       m.number = Number.isFinite(n) ? n : e.target.value;
@@ -206,6 +209,30 @@
     addMemory();
     setStatus('New dot added in the middle of the sea — drag it where you want it.', 'ok');
   });
+
+  /* Show each named photo as it will appear, or say plainly that the file
+     isn't there — a mistyped filename is otherwise invisible until the memory
+     page is opened and silently shows nothing. */
+  function renderThumbs(m) {
+    const box = $('#eThumbs');
+    if (!box) return;
+    box.innerHTML = '';
+    (m.photos || []).forEach((name) => {
+      const fig = document.createElement('figure');
+      fig.className = 'thumb';
+      const img = document.createElement('img');
+      img.src = /^(https?:|\/|data:)/.test(name) ? name : 'photos/' + encodeURIComponent(name);
+      img.alt = name;
+      const cap = document.createElement('figcaption');
+      cap.textContent = name;
+      img.addEventListener('error', () => {
+        fig.classList.add('is-missing');
+        cap.textContent = name + ' — not found in web/photos/';
+      });
+      fig.append(img, cap);
+      box.appendChild(fig);
+    });
+  }
 
   function fmtCoords(m) {
     return m.x.toFixed(1) + '% across, ' + m.y.toFixed(1) + '% down';
