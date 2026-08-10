@@ -73,10 +73,9 @@ drawing underneath*, and drag each dot onto its number.
 
 ### Photos
 
-Photos go in `web/photos/`, uploaded the same way. Reference them by filename
-in the admin panel — e.g. typing `poros-boat.jpg, ferry.jpg` shows both on that
-memory's page. Any format a browser reads (jpg, png, webp) is fine. Resize
-anything enormous down to about 1600px wide first so the pages stay quick.
+Photos do **not** go through GitHub. Open a memory in the admin panel, drag
+photos onto the drop zone (or click it to browse), and they upload straight to
+the site. See "Adding photos" below.
 
 ## 2. Run it on your own machine
 
@@ -129,6 +128,28 @@ the number you drew. *+ Add a dot* works here too.
 **Site & backup tab** — the site title, the hint under the map, the dedication at
 the foot of every memory page. Download a backup any time; restore from one if
 something goes wrong.
+
+### Adding photos
+
+Pick a memory, then drag photos onto the drop zone or click it to browse. They
+upload immediately; hover a thumbnail to reorder it with `‹` `›` or remove it
+with `✕`. Press **Save changes** to attach them to the memory.
+
+Large photos are shrunk to 1600px and re-encoded before they leave the browser,
+so an 8MB phone photo arrives as a few hundred KB. Small ones are left alone.
+
+Uploads are stored in Netlify Blobs under `/api/photo/<key>` — not in this
+repository — so they appear on the site as soon as you save, with no commit and
+no redeploy. They survive redeploys, and removing a photo from a memory deletes
+it from storage unless another memory still uses it.
+
+**HEIC files will not work.** iPhones shoot HEIC by default and browsers cannot
+display it; the panel says so if you try. Export as JPG first, or set
+*Settings → Camera → Formats → Most Compatible* on the phone.
+
+Photos committed to `web/photos/` still work too — open *"Or type filenames
+from web/photos/ by hand"* and list them by filename. Those ones are part of
+the repository, so they need a deploy before the site sees them.
 
 Press **Save changes** to publish. Anyone with the site open sees the update the
 next time their tab regains focus.

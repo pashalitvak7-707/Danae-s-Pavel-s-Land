@@ -49,11 +49,43 @@ window.MemoryAPI = (function () {
     return res.json();
   }
 
+  async function uploadPhoto(file, token) {
+    const res = await fetch('/api/photo', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': file.type || 'application/octet-stream',
+        'X-Filename': encodeURIComponent(file.name || 'photo')
+      },
+      body: file
+    });
+    let body = {};
+    try { body = await res.json(); } catch { /* non-JSON error page */ }
+    if (res.status === 401) throw new Error('Wrong password — sign in again.');
+    if (!res.ok) throw new Error(body.error || ('Upload failed (' + res.status + ').'));
+    return body;
+  }
+
+  async function deletePhoto(key, token) {
+    const res = await fetch('/api/photo/' + encodeURIComponent(key), {
+      method: 'DELETE',
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (!res.ok) throw new Error('Could not delete that photo.');
+    return res.json();
+  }
+
+  async function listPhotos(token) {
+    const res = await fetch('/api/photos', { headers: { 'Authorization': 'Bearer ' + token } });
+    if (!res.ok) throw new Error('Could not list photos.');
+    return (await res.json()).photos || [];
+  }
+
   const token = {
     get:   () => sessionStorage.getItem(TOKEN_KEY),
     set:   (v) => sessionStorage.setItem(TOKEN_KEY, v),
     clear: () => sessionStorage.removeItem(TOKEN_KEY)
   };
 
-  return { loadContent, saveContent, login, token };
+  return { loadContent, saveContent, login, uploadPhoto, deletePhoto, listPhotos, token };
 })();

@@ -85,11 +85,51 @@ button{ font:inherit; cursor:pointer; }
   font-size:13px;
 }
 
+.flabel{ display:block; margin-bottom:8px; font-size:13px; font-weight:600; color:#556; }
+
+.drop{
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:3px; padding:26px 18px; margin-bottom:12px;
+  border:2px dashed #c6cfe0; border-radius:11px;
+  background:var(--paper); color:#778; text-align:center;
+  cursor:pointer; transition:border-color .15s, background .15s;
+}
+.drop b{ color:var(--ink); font-size:15px; }
+.drop span{ font-size:13px; }
+.drop:hover{ border-color:var(--accent); background:#f7f9ff; }
+.drop.is-over{ border-color:var(--accent); background:#e9f0ff; border-style:solid; }
+.drop:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+
+.upstatus{ margin:0 0 12px; font-size:13px; color:#667; min-height:1.2em; }
+.upstatus.is-ok{ color:var(--ok); }
+.upstatus.is-bad{ color:#c0243c; }
+
+.adv{ margin:6px 0 18px; }
+.adv summary{ font-size:13px; color:#778; cursor:pointer; }
+.adv input{
+  width:100%; margin-top:8px; padding:10px 12px;
+  border:1.5px solid var(--line); border-radius:8px;
+  font-family:inherit; font-size:14px; color:var(--ink);
+}
+
 .thumbs{
   display:flex; flex-wrap:wrap; gap:12px;
-  margin:-6px 0 18px;
+  margin:-2px 0 18px;
 }
-.thumb{ margin:0; width:132px; font-size:11px; color:#778; }
+.thumb{ position:relative; margin:0; width:132px; font-size:11px; color:#778; }
+.thumb__bar{
+  position:absolute; top:5px; right:5px;
+  display:flex; gap:3px;
+  opacity:0; transition:opacity .15s;
+}
+.thumb:hover .thumb__bar, .thumb:focus-within .thumb__bar{ opacity:1; }
+.thumb__bar button{
+  width:22px; height:22px; padding:0; line-height:1;
+  border:0; border-radius:5px;
+  background:rgba(20,33,61,.82); color:#fff; font-size:13px;
+}
+.thumb__bar button:disabled{ opacity:.3; cursor:default; }
+.thumb__bar button:last-child:hover:not(:disabled){ background:#c0243c; }
 .thumb img{
   display:block; width:132px; height:96px; object-fit:cover;
   border-radius:7px; border:1.5px solid var(--line); background:#eef1f7;

@@ -110,9 +110,16 @@
         '<input type="text" id="eDate"></label>' +
       '<label>The memory <span class="note" style="font-weight:400">— leave a blank line between paragraphs</span>' +
         '<textarea id="eBody"></textarea></label>' +
-      '<label>Photo files <span class="note" style="font-weight:400">— filenames from web/photos/, separated by commas</span>' +
-        '<input type="text" id="ePhotos"></label>' +
+      '<span class="flabel">Photos</span>' +
+      '<div id="drop" class="drop" tabindex="0" role="button">' +
+        '<b>Drag photos here</b>' +
+        '<span>or click to choose them from your computer</span>' +
+      '</div>' +
+      '<input type="file" id="filePick" accept="image/*" multiple hidden>' +
+      '<p id="upStatus" class="upstatus"></p>' +
       '<div id="eThumbs" class="thumbs"></div>' +
+      '<details class="adv"><summary>Or type filenames from web/photos/ by hand</summary>' +
+        '<input type="text" id="ePhotos"></details>' +
       '<p class="coords">Dot position: <b id="eCoords"></b> — move it on the “Marker positions” tab.</p>' +
       '<hr class="rule">' +
       '<button type="button" id="eDelete" class="danger">Delete this memory</button>' +
@@ -136,6 +143,7 @@
       renderThumbs(m);
     });
     renderThumbs(m);
+    wireDrop(m);
     $('#eNumber').addEventListener('input', (e) => {
       const n = parseInt(e.target.value, 10);
       m.number = Number.isFinite(n) ? n : e.target.value;
@@ -217,20 +225,154 @@
     const box = $('#eThumbs');
     if (!box) return;
     box.innerHTML = '';
-    (m.photos || []).forEach((name) => {
+    const list = m.photos || [];
+
+    list.forEach((name, i) => {
       const fig = document.createElement('figure');
       fig.className = 'thumb';
+
       const img = document.createElement('img');
       img.src = /^(https?:|\/|data:)/.test(name) ? name : 'photos/' + encodeURIComponent(name);
       img.alt = name;
+
       const cap = document.createElement('figcaption');
-      cap.textContent = name;
+      const uploaded = name.startsWith('/api/photo/');
+      cap.textContent = uploaded ? 'Uploaded' : name;
+
       img.addEventListener('error', () => {
         fig.classList.add('is-missing');
-        cap.textContent = name + ' — not found in web/photos/';
+        cap.textContent = uploaded
+          ? 'This upload is missing from the server.'
+          : name + ' — not found in web/photos/';
       });
-      fig.append(img, cap);
+
+      const bar = document.createElement('div');
+      bar.className = 'thumb__bar';
+      bar.append(
+        mkBtn('‹', 'Move earlier', i === 0, () => { move(m, i, i - 1); }),
+        mkBtn('›', 'Move later', i === list.length - 1, () => { move(m, i, i + 1); }),
+        mkBtn('✕', 'Remove from this memory', false, () => { remove(m, i, name); })
+      );
+
+      fig.append(img, bar, cap);
       box.appendChild(fig);
+    });
+  }
+
+  function mkBtn(label, title, disabled, fn) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = label; b.title = title; b.disabled = disabled;
+    b.addEventListener('click', fn);
+    return b;
+  }
+
+  function move(m, from, to) {
+    const [item] = m.photos.splice(from, 1);
+    m.photos.splice(to, 0, item);
+    touch(); syncPhotoField(m); renderThumbs(m);
+  }
+
+  async function remove(m, i, name) {
+    m.photos.splice(i, 1);
+    touch(); syncPhotoField(m); renderThumbs(m);
+    // Uploaded photos are only ours to delete, and only once nothing else uses them.
+    if (name.startsWith('/api/photo/') && !usedAnywhere(name)) {
+      const key = name.slice('/api/photo/'.length);
+      try { await api.deletePhoto(key, api.token.get()); } catch { /* leave the orphan */ }
+    }
+  }
+
+  function usedAnywhere(name) {
+    return content.memories.some((mm) => (mm.photos || []).includes(name));
+  }
+
+  function syncPhotoField(m) {
+    const f = $('#ePhotos');
+    if (f) f.value = (m.photos || []).join(', ');
+  }
+
+  /* ---------------- uploading ---------------- */
+
+  const HEIC = /\.(heic|heif)$/i;
+
+  /* Shrink before upload: a phone photo is often 5-8MB, which is slow to send,
+     slow to load, and close to the request size limit. */
+  async function shrink(file, max = 1600, quality = 0.85) {
+    if (file.type === 'image/gif') return file;          // resizing would kill the animation
+    let bmp;
+    try { bmp = await createImageBitmap(file); }
+    catch { return file; }                                // let the server say what it can't take
+    if (bmp.width <= max && bmp.height <= max && file.size < 900 * 1024) return file;
+
+    const s = Math.min(1, max / Math.max(bmp.width, bmp.height));
+    const c = document.createElement('canvas');
+    c.width = Math.round(bmp.width * s);
+    c.height = Math.round(bmp.height * s);
+    c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+    const blob = await new Promise((r) => c.toBlob(r, 'image/jpeg', quality));
+    if (!blob) return file;
+    return new File([blob], (file.name || 'photo').replace(/\.[^.]+$/, '') + '.jpg',
+                    { type: 'image/jpeg' });
+  }
+
+  async function addFiles(m, files) {
+    const imgs = [...files].filter((f) => f.type.startsWith('image/') || HEIC.test(f.name));
+    if (!imgs.length) { upStatus('Those files are not images.', 'bad'); return; }
+
+    let done = 0, failed = 0;
+    for (const file of imgs) {
+      upStatus(`Uploading ${done + failed + 1} of ${imgs.length}…`, '');
+      try {
+        if (HEIC.test(file.name) && !file.type.startsWith('image/')) {
+          throw new Error(file.name + ' is a HEIC file — save it as JPG first.');
+        }
+        const small = await shrink(file);
+        const { url } = await api.uploadPhoto(small, api.token.get());
+        m.photos = m.photos || [];
+        m.photos.push(url);
+        done++;
+        touch(); syncPhotoField(m); renderThumbs(m);
+      } catch (err) {
+        failed++;
+        upStatus(err.message, 'bad');
+        if (/password/i.test(err.message)) return;
+      }
+    }
+    if (!failed) {
+      upStatus(done + (done === 1 ? ' photo added' : ' photos added') +
+               ' — press Save changes to publish.', 'ok');
+    }
+  }
+
+  function upStatus(msg, kind) {
+    const el = $('#upStatus');
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'upstatus' + (kind ? ' is-' + kind : '');
+  }
+
+  function wireDrop(m) {
+    const drop = $('#drop');
+    const pick = $('#filePick');
+    if (!drop || !pick) return;
+
+    drop.addEventListener('click', () => pick.click());
+    drop.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick.click(); }
+    });
+    pick.addEventListener('change', () => {
+      if (pick.files.length) addFiles(m, pick.files);
+      pick.value = '';
+    });
+
+    ['dragenter', 'dragover'].forEach((ev) =>
+      drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add('is-over'); }));
+    ['dragleave', 'dragend'].forEach((ev) =>
+      drop.addEventListener(ev, () => drop.classList.remove('is-over')));
+    drop.addEventListener('drop', (e) => {
+      e.preventDefault();
+      drop.classList.remove('is-over');
+      if (e.dataTransfer?.files?.length) addFiles(m, e.dataTransfer.files);
     });
   }
 
