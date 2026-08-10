@@ -2,6 +2,10 @@
   publish = "web"
   command = "echo 'static site — nothing to build'"
 
+[build.environment]
+  # The function imports JSON with an import attribute, which needs a modern runtime.
+  NODE_VERSION = "22"
+
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
