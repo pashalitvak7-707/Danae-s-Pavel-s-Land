@@ -41,7 +41,10 @@
 
   <!-- --- texts --- -->
   <section id="tab-text" class="tab">
-    <aside id="list"></aside>
+    <aside id="list">
+      <button id="addBtn" class="addbtn" type="button">+ Add a memory</button>
+      <div id="listItems"></div>
+    </aside>
     <div id="editor">
       <p class="empty">Pick a memory on the left.</p>
     </div>
@@ -51,7 +54,8 @@
   <section id="tab-place" class="tab" hidden>
     <div class="place__bar">
       <label><input type="checkbox" id="showNumbers"> Show my numbered drawing underneath</label>
-      <span class="place__hint">Pick a memory below, then click the map to move its dot.</span>
+      <button id="addBtn2" class="addbtn addbtn--inline" type="button">+ Add a dot</button>
+      <span class="place__hint">Drag any dot to move it, or pick one below and click the map.</span>
     </div>
     <div id="placeWrap">
       <div id="placeCanvas">

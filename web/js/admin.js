@@ -68,7 +68,7 @@
   }
 
   function renderList() {
-    const list = $('#list');
+    const list = $('#listItems');
     list.innerHTML = '';
     content.memories.forEach((m) => {
       const b = document.createElement('button');
@@ -103,6 +103,8 @@
     box.innerHTML = '<div class="pane">' +
       '<label>Memory name <span class="note" style="font-weight:400">— this is what pops up above the dot</span>' +
         '<input type="text" id="eName"></label>' +
+      '<label>Number <span class="note" style="font-weight:400">— the number you drew on the map, so you can match them up</span>' +
+        '<input type="text" id="eNumber" inputmode="numeric"></label>' +
       '<label>Place <input type="text" id="ePlace"></label>' +
       '<label>Date <span class="note" style="font-weight:400">— optional, free text</span>' +
         '<input type="text" id="eDate"></label>' +
@@ -111,9 +113,12 @@
       '<label>Photo files <span class="note" style="font-weight:400">— filenames from web/photos/, separated by commas</span>' +
         '<input type="text" id="ePhotos"></label>' +
       '<p class="coords">Dot position: <b id="eCoords"></b> — move it on the “Marker positions” tab.</p>' +
+      '<hr class="rule">' +
+      '<button type="button" id="eDelete" class="danger">Delete this memory</button>' +
     '</div>';
 
     $('#eName').value   = m.name || '';
+    $('#eNumber').value = m.number ?? '';
     $('#ePlace').value  = m.place || '';
     $('#eDate').value   = m.date || '';
     $('#eBody').value   = m.body || '';
@@ -128,7 +133,79 @@
       m.photos = e.target.value.split(',').map((s) => s.trim()).filter(Boolean);
       touch();
     });
+    $('#eNumber').addEventListener('input', (e) => {
+      const n = parseInt(e.target.value, 10);
+      m.number = Number.isFinite(n) ? n : e.target.value;
+      touch();
+      renderList();
+    });
+    $('#eDelete').addEventListener('click', () => removeMemory(m.id));
   }
+
+  /* ---------------- add / delete ---------------- */
+
+  function newId() {
+    let id;
+    do { id = 'm' + Math.random().toString(36).slice(2, 8); }
+    while (content.memories.some((m) => m.id === id));
+    return id;
+  }
+
+  function nextNumber() {
+    const nums = content.memories
+      .map((m) => parseInt(m.number, 10))
+      .filter(Number.isFinite);
+    return nums.length ? Math.max(...nums) + 1 : 1;
+  }
+
+  function addMemory() {
+    const m = {
+      id: newId(),
+      number: nextNumber(),
+      name: 'New memory',
+      place: '',
+      date: '',
+      x: 50,
+      y: 50,          // lands in open sea, easy to spot and drag into place
+      body: '',
+      photos: []
+    };
+    content.memories.push(m);
+    currentId = m.id;
+    touch();
+    renderList();
+    renderEditor();
+    if (!$('#tab-place').hidden) renderPlacement();
+    return m;
+  }
+
+  function removeMemory(id) {
+    const i = content.memories.findIndex((m) => m.id === id);
+    if (i === -1) return;
+    const m = content.memories[i];
+    if (!confirm('Delete “' + (m.name || 'this memory') + '”?\n\nIts dot disappears from the map. This cannot be undone once you save.')) return;
+
+    content.memories.splice(i, 1);
+    // Select a sensible neighbour so the editor is never left pointing at nothing.
+    const next = content.memories[i] || content.memories[i - 1];
+    currentId = next ? next.id : null;
+    touch();
+    renderList();
+    renderEditor();
+    if (!$('#tab-place').hidden) renderPlacement();
+  }
+
+  $('#addBtn').addEventListener('click', () => {
+    addMemory();
+    document.querySelector('#tabs button[data-tab="text"]').click();
+    $('#eName').focus();
+    $('#eName').select();
+  });
+
+  $('#addBtn2').addEventListener('click', () => {
+    addMemory();
+    setStatus('New dot added in the middle of the sea — drag it where you want it.', 'ok');
+  });
 
   function fmtCoords(m) {
     return m.x.toFixed(1) + '% across, ' + m.y.toFixed(1) + '% down';

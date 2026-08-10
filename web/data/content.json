@@ -32,6 +32,9 @@
     { "id": "m26", "number": 26, "name": "Memory 26", "place": "St. Maxime", "date": "", "x": 77.9, "y": 23.1, "body": "Write this memory in the admin panel.", "photos": [] },
     { "id": "m27", "number": 27, "name": "Memory 27", "place": "St. Tropez",  "date": "", "x": 57.6, "y": 23.4, "body": "Write this memory in the admin panel.", "photos": [] },
     { "id": "m28", "number": 28, "name": "Memory 28", "place": "St. Tropez",  "date": "", "x": 59.4, "y": 23.1, "body": "Write this memory in the admin panel.", "photos": [] },
-    { "id": "m29", "number": 29, "name": "Memory 29", "place": "Alex's",   "date": "", "x": 84.5, "y": 19.2, "body": "Write this memory in the admin panel.", "photos": [] }
+    { "id": "m29", "number": 29, "name": "Memory 29", "place": "Alex's",   "date": "", "x": 84.5, "y": 19.2, "body": "Write this memory in the admin panel.", "photos": [] },
+    { "id": "m30", "number": 30, "name": "Memory 30", "place": "",         "date": "", "x": 33.0, "y": 42.0, "body": "Write this memory in the admin panel.", "photos": [] },
+    { "id": "m31", "number": 31, "name": "Memory 31", "place": "",         "date": "", "x": 38.0, "y": 42.0, "body": "Write this memory in the admin panel.", "photos": [] },
+    { "id": "m32", "number": 32, "name": "Memory 32", "place": "",         "date": "", "x": 43.0, "y": 42.0, "body": "Write this memory in the admin panel.", "photos": [] }
   ]
 }
