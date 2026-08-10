@@ -17,14 +17,16 @@ lowercase, with `.png` on the end:
 | Filename | What it is | Who sees it | Status |
 | --- | --- | --- | --- |
 | `world.png` | The clean drawing, no numbers | Everyone — this is the map | ✅ in place |
-| `world-numbered.png` | The same drawing with the pink numbers | Only you, inside the admin panel | ⬜ still needed |
+| `world-numbered.png` | The same drawing with the pink numbers | Only you, inside the admin panel | ✅ in place |
 
 **The filename is what matters, not the file.** Uploading a drawing under any
-other name (`Correct image.png`, `map final.png`) adds a file the site never
-looks at — it must be named `world.png`, sitting in `web/art/`.
+other name (`Correct image.png`, `Image with markers.png`) adds a file the site
+never looks at — the two names above are the only ones it reads.
 
-Until `world-numbered.png` is uploaded, the *Show my numbered drawing
-underneath* tick-box in the admin panel greys itself out and says so.
+All 32 dots are already positioned. Their coordinates were measured by
+subtracting the clean drawing from the numbered one, which leaves only the
+handwritten numbers, then taking the centre of each. Every dot sits on the
+number it belongs to; nothing needs dragging unless you want to nudge one.
 
 ### Requirements
 
