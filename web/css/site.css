@@ -75,17 +75,19 @@ body{
   border-radius:50%;
   display:grid; place-items:center;
 }
-.marker__dot{
-  width:52%; height:52%;
+/* Dot and halo share one grid cell so they stay concentric. The button around
+   them stays big enough to hit on a phone even though the dot is small. */
+.marker__dot, .marker__halo{
+  grid-area:1 / 1;
+  width:26%; height:26%;
   border-radius:50%;
   background:var(--coral);
-  box-shadow:0 0 0 3px rgba(255,255,255,.95), 0 3px 10px rgba(0,0,0,.35);
+}
+.marker__dot{
+  box-shadow:0 0 0 2px rgba(255,255,255,.95), 0 2px 6px rgba(0,0,0,.35);
   transition:transform .25s var(--ease), background .25s var(--ease);
 }
 .marker__halo{
-  position:absolute; inset:0;
-  border-radius:50%;
-  background:var(--coral);
   opacity:.45;
   animation:pulse 2.8s var(--ease) infinite;
 }
@@ -93,9 +95,9 @@ body{
 .marker:nth-child(3n+1) .marker__halo{ animation-delay:-1.8s; }
 
 @keyframes pulse{
-  0%   { transform:scale(.45); opacity:.5; }
-  70%  { transform:scale(1);   opacity:0; }
-  100% { transform:scale(1);   opacity:0; }
+  0%   { transform:scale(1);   opacity:.5; }
+  70%  { transform:scale(2.6); opacity:0; }
+  100% { transform:scale(2.6); opacity:0; }
 }
 
 .marker:hover  .marker__dot,
